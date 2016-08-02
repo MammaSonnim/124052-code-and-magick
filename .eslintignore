@@ -1,0 +1,4 @@
+build/js/check.js
+build/js/*.min.js
+bin/
+tests/
