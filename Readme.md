@@ -1,7 +1,7 @@
 # Личный проект «Код и Магия» [![Build status][travis-image]][travis-url] [![Dependency status][dependency-image]][dependency-url]
 
 * Студент: [Яна Крикливая](https://up.htmlacademy.ru/javascript/6/user/124052).
-* Наставник: `Неизвестно`.
+* Наставник: [Макс Никитин] (https://github.com/4u/).
 
 ---
 
