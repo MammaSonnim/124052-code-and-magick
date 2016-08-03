@@ -10,21 +10,27 @@ function getMessage(a, b) {
   } else if (typeof a === 'number') {
     return 'Я прыгнул на ' + (a * 100) + ' сантиметров';
   } else if (Array.isArray(a) && !Array.isArray(b)) {
-    numberOfSteps = a.reduce(function (prev, next) {
-      if (typeof next !== undefined) {
-        return prev + next;
+    numberOfSteps = a.reduce(function(prev, current) {
+      if (typeof current !== 'undefined') {
+        return prev + current;
+      } else {
+        return false;
       }
     });
     return 'Я прошёл ' + numberOfSteps + ' шагов';
   } else if (Array.isArray(a) && Array.isArray(b)) {
-    for (var i = 0; i < a.length; i++) {
-      if (typeof arr[i] !== undefined) {
-        arr.push(a[i] * b[i]);
+    arr = a.map(function(value, i) {
+      if (typeof b[i] !== 'undefined') {
+        return value * b[i];
+      } else {
+        return false;
       }
-    }
-    distancePath = arr.reduce(function (prev, next) {
-      return prev + next;
+    });
+    distancePath = arr.reduce(function(prev, current) {
+      return prev + current;
     });
     return 'Я прошёл ' + distancePath + ' метров';
+  } else {
+    return false;
   }
 }
