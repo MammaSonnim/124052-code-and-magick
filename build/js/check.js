@@ -11,12 +11,16 @@ function getMessage(a, b) {
     return 'Я прыгнул на ' + (a * 100) + ' сантиметров';
   } else if (Array.isArray(a) && !Array.isArray(b)) {
     numberOfSteps = a.reduce(function (prev, next) {
-      return prev + next;
+      if (typeof next !== undefined) {
+        return prev + next;
+      }
     });
     return 'Я прошёл ' + numberOfSteps + ' шагов';
   } else if (Array.isArray(a) && Array.isArray(b)) {
     for (var i = 0; i < a.length; i++) {
-      arr.push(a[i] * b[i]);
+      if (typeof arr[i] !== undefined) {
+        arr.push(a[i] * b[i]);
+      }
     }
     distancePath = arr.reduce(function (prev, next) {
       return prev + next;
