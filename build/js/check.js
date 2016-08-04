@@ -18,7 +18,6 @@ function getMessage(a, b) {
   }
   if (Array.isArray(a) && Array.isArray(b)) {
     distancePath = a.reduce(function(prev, current, index) {
-      console.log(current);
       return prev + current * (b[index] || 0);
     }, 0);
     return 'Я прошёл ' + distancePath + ' метров';
