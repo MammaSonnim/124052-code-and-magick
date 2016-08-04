@@ -22,5 +22,5 @@ function getMessage(a, b) {
     }, 0);
     return 'Я прошёл ' + distancePath + ' метров';
   }
-  return false;
+  return '';
 }
