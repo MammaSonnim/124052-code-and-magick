@@ -392,11 +392,44 @@ window.Game = (function() {
     },
 
     /**
+     * Отрисовка декоративного прямоугольника.
+     */
+    _drawDecorRect: function() {
+      var x = 60;
+      var y = 60;
+
+      this.ctx.fillStyle = '#000000';
+      this.ctx.beginPath();
+      this.ctx.moveTo(x, y);
+      this.ctx.lineTo(x + 150, y);
+      this.ctx.lineTo(x + 150, y + 100);
+      this.ctx.lineTo(x - 10, y + 100);
+      this.ctx.closePath();
+      this.ctx.fill();
+    },
+
+    /**
+     * Отрисовка прямоугольника с текстом.
+     */
+    _drawTextRect: function(x, y) {
+      this._drawDecorRect();
+      this.ctx.fillStyle = '#ffffff';
+      this.ctx.beginPath();
+      this.ctx.moveTo(x, y);
+      this.ctx.lineTo(x + 150, y);
+      this.ctx.lineTo(x + 150, y + 100);
+      this.ctx.lineTo(x - 10, y + 100);
+      this.ctx.closePath();
+      this.ctx.fill();
+    },
+
+    /**
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
+          this._drawTextRect(50, 50);
           console.log('you have won!');
           break;
         case Verdict.FAIL:
