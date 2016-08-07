@@ -406,6 +406,23 @@ window.Game = (function() {
     },
 
     /**
+     * Отрисовка текста.
+     */
+    _drawText: function(x, y, text) {
+      var TEXT_COLOR = '#000000';
+      var FONT_STYLE = '16px PT Mono';
+      var BASE_LINE = 'hanging';
+      var LINE_HEIGHT = 20;
+
+      this.ctx.fillStyle = TEXT_COLOR;
+      this.ctx.font = FONT_STYLE;
+      this.ctx.textBaseline = BASE_LINE;
+      for (var i = 0; i < text.length; i++) {
+        this.ctx.fillText(text[i], x, y + LINE_HEIGHT * i);
+      }
+    },
+
+    /**
      * Сборка прямоугольников и текста.
      */
     _getTextRect: function(text) {
@@ -417,21 +434,11 @@ window.Game = (function() {
       var RECT_SHIFT = 10;
       var RECT_COLOR = '#ffffff';
       var SHADOW_COLOR = 'rgba(0, 0, 0, 0.7)';
-      var TEXT_COLOR = '#000000';
-      var FONT_STYLE = '16px PT Mono';
-      var BASE_LINE = 'hanging';
       var TEXT_SHIFT = 15;
-      var LINE_HEIGHT = 20;
 
       this._drawRectangle(startX + RECT_SHIFT, startY + RECT_SHIFT, RECT_WIDTH, RECT_HEIGHT, RECT_SKEW, SHADOW_COLOR);
       this._drawRectangle(startX, startY, RECT_WIDTH, RECT_HEIGHT, RECT_SKEW, RECT_COLOR);
-
-      this.ctx.fillStyle = TEXT_COLOR;
-      this.ctx.font = FONT_STYLE;
-      this.ctx.textBaseline = BASE_LINE;
-      for (var i = 0; i < text.length; i++) {
-        this.ctx.fillText(text[i], startX + TEXT_SHIFT, startY + TEXT_SHIFT + LINE_HEIGHT * i);
-      }
+      this._drawText(startX + TEXT_SHIFT, startY + TEXT_SHIFT, text);
     },
 
     /**
