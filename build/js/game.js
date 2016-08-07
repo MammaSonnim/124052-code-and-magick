@@ -426,8 +426,8 @@ window.Game = (function() {
      * Сборка прямоугольников и текста.
      */
     _getTextRect: function(text) {
-      var startX = 200;
-      var startY = 50;
+      var startX = this.state.objects['0'].x + 50;
+      var startY = this.state.objects['0'].y - 100;
       var RECT_WIDTH = 350;
       var RECT_HEIGHT = 100;
       var RECT_SKEW = 10;
@@ -435,7 +435,6 @@ window.Game = (function() {
       var RECT_COLOR = '#ffffff';
       var SHADOW_COLOR = 'rgba(0, 0, 0, 0.7)';
       var TEXT_SHIFT = 15;
-
       this._drawRectangle(startX + RECT_SHIFT, startY + RECT_SHIFT, RECT_WIDTH, RECT_HEIGHT, RECT_SKEW, SHADOW_COLOR);
       this._drawRectangle(startX, startY, RECT_WIDTH, RECT_HEIGHT, RECT_SKEW, RECT_COLOR);
       this._drawText(startX + TEXT_SHIFT, startY + TEXT_SHIFT, text);
