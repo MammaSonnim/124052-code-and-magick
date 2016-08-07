@@ -426,8 +426,8 @@ window.Game = (function() {
      * Сборка прямоугольников и текста.
      */
     _getTextRect: function(text) {
-      var startX = this.state.objects['0'].x + 50;
-      var startY = this.state.objects['0'].y - 100;
+      var startX = this.state.objects[0].x + 50;
+      var startY = this.state.objects[0].y - 100;
       var RECT_WIDTH = 350;
       var RECT_HEIGHT = 100;
       var RECT_SKEW = 10;
