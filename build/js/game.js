@@ -435,10 +435,10 @@ window.Game = (function() {
       var TEXT_SHIFT = 15;
       var startX = this.state.objects[0].x + 50;
       var startY = this.state.objects[0].y - 100;
-      var edgeX = startX + RECT_WIDTH;
+      var endX = startX + RECT_WIDTH;
 
-      if (edgeX > this.canvas.width) {
-        startX -= edgeX - this.canvas.width;
+      if (endX > this.canvas.width) {
+        startX -= endX - this.canvas.width + RECT_SHIFT;
       }
       if (startY < 0) {
         startY = 0;
