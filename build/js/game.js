@@ -392,11 +392,6 @@ window.Game = (function() {
     },
 
     /**
-     * @const
-     * @type {number}
-     */
-
-    /**
      * Отрисовка прямоугольника.
      */
     _drawRectangle: function(x, y, width, height, skew, color) {
