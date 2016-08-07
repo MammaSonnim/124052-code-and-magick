@@ -392,35 +392,54 @@ window.Game = (function() {
     },
 
     /**
-     * Отрисовка декоративного прямоугольника.
+     * @const
+     * @type {number}
      */
-    _drawDecorRect: function() {
-      var x = 60;
-      var y = 60;
 
-      this.ctx.fillStyle = '#000000';
+    /**
+     * Отрисовка прямоугольника.
+     */
+    _drawRectangle: function(x, y, width, height, skew, color) {
+      this.ctx.fillStyle = color;
       this.ctx.beginPath();
       this.ctx.moveTo(x, y);
-      this.ctx.lineTo(x + 150, y);
-      this.ctx.lineTo(x + 150, y + 100);
-      this.ctx.lineTo(x - 10, y + 100);
+      this.ctx.lineTo(x + width, y);
+      this.ctx.lineTo(x + width, y + height);
+      this.ctx.lineTo(x - skew, y + height);
       this.ctx.closePath();
       this.ctx.fill();
     },
 
     /**
-     * Отрисовка прямоугольника с текстом.
+     * Отрисовка текста
      */
-    _drawTextRect: function(x, y) {
-      this._drawDecorRect();
-      this.ctx.fillStyle = '#ffffff';
-      this.ctx.beginPath();
-      this.ctx.moveTo(x, y);
-      this.ctx.lineTo(x + 150, y);
-      this.ctx.lineTo(x + 150, y + 100);
-      this.ctx.lineTo(x - 10, y + 100);
-      this.ctx.closePath();
-      this.ctx.fill();
+    _drawText: function(text, x, y) {
+      var TEXT_COLOR = '#000000';
+      var FONT_STYLE = '30px Tahoma';
+      var BASE_LINE = 'hanging';
+
+      this.ctx.fillStyle = TEXT_COLOR;
+      this.ctx.font = FONT_STYLE;
+      this.ctx.textBaseline = BASE_LINE;
+      this.ctx.fillText(text, x, y);
+    },
+
+    /**
+     * Сборка прямоугольников и текста.
+     */
+    _getTextRect: function(text) {
+      var startX = 50;
+      var startY = 50;
+      var RECT_WIDTH = 150;
+      var RECT_HEIGHT = 100;
+      var RECT_SKEW = 10;
+      var RECT_SHIFT = 10;
+      var RECT_COLOR = '#ffffff';
+      var SHADOW_COLOR = 'rgba(0, 0, 0, 0.7)';
+
+      this._drawRectangle(startX + RECT_SHIFT, startY + RECT_SHIFT, RECT_WIDTH, RECT_HEIGHT, RECT_SKEW, SHADOW_COLOR);
+      this._drawRectangle(startX, startY, RECT_WIDTH, RECT_HEIGHT, RECT_SKEW, RECT_COLOR);
+      this._drawText(text, startX, startY);
     },
 
     /**
@@ -429,16 +448,19 @@ window.Game = (function() {
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          this._drawTextRect(50, 50);
+          this._getTextRect(50, 50);
           console.log('you have won!');
           break;
         case Verdict.FAIL:
+          this._getTextRect(50, 50);
           console.log('you have failed!');
           break;
         case Verdict.PAUSE:
+          this._getTextRect(50, 50);
           console.log('game is on pause!');
           break;
         case Verdict.INTRO:
+          this._getTextRect(50, 50);
           console.log('welcome to the game! Press Space to start');
           break;
       }
