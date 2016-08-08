@@ -408,18 +408,33 @@ window.Game = (function() {
     /**
      * Отрисовка текста.
      */
-    _drawText: function(x, y, text) {
+    _drawText: function(x, y, width, text) {
       var TEXT_COLOR = '#000000';
       var FONT_STYLE = '16px PT Mono';
       var BASE_LINE = 'hanging';
       var LINE_HEIGHT = 20;
+      var words = text.split(' ');
+      var line = '';
+      var lineStartY = LINE_HEIGHT;
 
       this.ctx.fillStyle = TEXT_COLOR;
       this.ctx.font = FONT_STYLE;
       this.ctx.textBaseline = BASE_LINE;
-      for (var i = 0; i < text.length; i++) {
-        this.ctx.fillText(text[i], x, y + LINE_HEIGHT * i);
+
+      for (var i = 0; i < words.length; i++) {
+        var tmpLine = line + words[i] + ' ';
+        var tmpLineWidth = this.ctx.measureText(tmpLine).width;
+
+        if (tmpLineWidth > width) {
+          this.ctx.fillText(line, x, y + lineStartY);
+          line = words[i] + ' ';
+          lineStartY += LINE_HEIGHT;
+        } else {
+          line = tmpLine;
+        }
       }
+
+      this.ctx.fillText(line, x, y + lineStartY);
     },
 
     /**
@@ -433,6 +448,7 @@ window.Game = (function() {
       var RECT_COLOR = '#ffffff';
       var SHADOW_COLOR = 'rgba(0, 0, 0, 0.7)';
       var TEXT_SHIFT = 15;
+      var TEXT_WIDTH = RECT_WIDTH - TEXT_SHIFT;
       var startX = this.state.objects[0].x + 50;
       var startY = this.state.objects[0].y - 100;
       var endX = startX + RECT_WIDTH;
@@ -446,7 +462,7 @@ window.Game = (function() {
 
       this._drawRectangle(startX + RECT_SHIFT, startY + RECT_SHIFT, RECT_WIDTH, RECT_HEIGHT, RECT_SKEW, SHADOW_COLOR);
       this._drawRectangle(startX, startY, RECT_WIDTH, RECT_HEIGHT, RECT_SKEW, RECT_COLOR);
-      this._drawText(startX + TEXT_SHIFT, startY + TEXT_SHIFT, text);
+      this._drawText(startX + TEXT_SHIFT, startY, TEXT_WIDTH, text);
     },
 
     /**
@@ -455,35 +471,16 @@ window.Game = (function() {
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          this._getTextRect(
-            [
-              'Уровень затащен!'
-            ]
-          );
+          this._getTextRect('Уровень затащен!');
           break;
         case Verdict.FAIL:
-          this._getTextRect(
-            [
-              'Потрачено!'
-            ]
-          );
+          this._getTextRect('Потрачено!');
           break;
         case Verdict.PAUSE:
-          this._getTextRect(
-            [
-              'Игра на паузе',
-              '(пробел для продолжения)'
-            ]
-          );
+          this._getTextRect('Игра на паузе (пробел для продолжения)');
           break;
         case Verdict.INTRO:
-          this._getTextRect(
-            [
-              'Я Пендальф — великий, ужасный!',
-              'Я умею ходить и летать, а еще',
-              'могу пульнуть фаерболлом (shift).'
-            ]
-          );
+          this._getTextRect('Я Пендальф — великий, ужасный! Я умею ходить и летать, а еще могу пульнуть фаерболлом (shift).');
           break;
       }
     },
