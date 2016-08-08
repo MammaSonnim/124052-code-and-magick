@@ -399,8 +399,8 @@ window.Game = (function() {
       this.ctx.beginPath();
       this.ctx.moveTo(x, y);
       this.ctx.lineTo(x + width, y);
-      this.ctx.lineTo(x + width, y + height);
-      this.ctx.lineTo(x - skew, y + height);
+      this.ctx.lineTo(x + width, y - height);
+      this.ctx.lineTo(x - skew, y - height);
       this.ctx.closePath();
       this.ctx.fill();
     },
@@ -435,34 +435,37 @@ window.Game = (function() {
       }
 
       this.ctx.fillText(line, x, y + lineStartY);
+      return lineStartY;
     },
 
     /**
      * Сборка прямоугольников и текста.
      */
     _getTextRect: function(text) {
-      var RECT_WIDTH = 350;
-      var RECT_HEIGHT = 100;
+      var RECT_WIDTH = 300;
       var RECT_SKEW = 10;
       var RECT_SHIFT = 10;
       var RECT_COLOR = '#ffffff';
       var SHADOW_COLOR = 'rgba(0, 0, 0, 0.7)';
       var TEXT_SHIFT = 15;
       var TEXT_WIDTH = RECT_WIDTH - TEXT_SHIFT;
-      var startX = this.state.objects[0].x + 50;
-      var startY = this.state.objects[0].y - 100;
+      var RECT_POS_X = 50;
+      var RECT_POS_Y = 0;
+      var startX = this.state.objects[0].x + RECT_POS_X;
+      var startY = this.state.objects[0].y + RECT_POS_Y;
       var endX = startX + RECT_WIDTH;
+      var rectHeight = this._drawText(startX + TEXT_SHIFT, startY, TEXT_WIDTH, text) + TEXT_SHIFT * 2;
 
       if (endX > this.canvas.width) {
         startX -= endX - this.canvas.width + RECT_SHIFT;
       }
-      if (startY < 0) {
-        startY = 0;
+      if (startY < rectHeight) {
+        startY = rectHeight;
       }
 
-      this._drawRectangle(startX + RECT_SHIFT, startY + RECT_SHIFT, RECT_WIDTH, RECT_HEIGHT, RECT_SKEW, SHADOW_COLOR);
-      this._drawRectangle(startX, startY, RECT_WIDTH, RECT_HEIGHT, RECT_SKEW, RECT_COLOR);
-      this._drawText(startX + TEXT_SHIFT, startY, TEXT_WIDTH, text);
+      this._drawRectangle(startX + RECT_SHIFT, startY + RECT_SHIFT, RECT_WIDTH, rectHeight, RECT_SKEW, SHADOW_COLOR);
+      this._drawRectangle(startX, startY, RECT_WIDTH, rectHeight, RECT_SKEW, RECT_COLOR);
+      this._drawText(startX + TEXT_SHIFT, startY - rectHeight, TEXT_WIDTH, text);
     },
 
     /**
