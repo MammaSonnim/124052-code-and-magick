@@ -477,32 +477,33 @@ window.Game = (function() {
         startY = rectHeight;
       }
 
-      this._drawRectangle(
-        startX + Message.Rectangle.SHIFT,
-        startY + Message.Rectangle.SHIFT,
-        Message.Rectangle.WIDTH,
-        rectHeight,
-        Message.Rectangle.SKEW,
-        Message.Rectangle.SHADOW_COLOR
-      );
-      this._drawRectangle(
-        startX,
-        startY,
-        Message.Rectangle.WIDTH,
-        rectHeight,
-        Message.Rectangle.SKEW,
-        Message.Rectangle.COLOR
-      );
-
-      this.ctx.fillStyle = Message.Text.COLOR;
-      this.ctx.font = Message.Text.FONT_STYLE;
-      this.ctx.textBaseline = Message.Text.BASE_LINE;
-      for (var i = 0; i < message.length; i++) {
-        this.ctx.fillText(
-          message[i],
-          startX + Message.Rectangle.PADDING,
-          startY - textHeight + Message.Text.LINE_HEIGHT * i - Message.Rectangle.PADDING
+      if (text !== '') {
+        this._drawRectangle(
+          startX + Message.Rectangle.SHIFT,
+          startY + Message.Rectangle.SHIFT,
+          Message.Rectangle.WIDTH,
+          rectHeight,
+          Message.Rectangle.SKEW,
+          Message.Rectangle.SHADOW_COLOR
         );
+        this._drawRectangle(
+          startX,
+          startY,
+          Message.Rectangle.WIDTH,
+          rectHeight,
+          Message.Rectangle.SKEW,
+          Message.Rectangle.COLOR
+        );
+        this.ctx.fillStyle = Message.Text.COLOR;
+        this.ctx.font = Message.Text.FONT_STYLE;
+        this.ctx.textBaseline = Message.Text.BASE_LINE;
+        for (var i = 0; i < message.length; i++) {
+          this.ctx.fillText(
+            message[i],
+            startX + Message.Rectangle.PADDING,
+            startY - textHeight + Message.Text.LINE_HEIGHT * i - Message.Rectangle.PADDING
+          );
+        }
       }
     },
 
