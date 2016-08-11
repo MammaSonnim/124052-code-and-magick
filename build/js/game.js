@@ -453,6 +453,10 @@ window.Game = (function() {
       }
       lines.push(line);
 
+      if (text === '') {
+        lineStartY = 0;
+      }
+
       return {
         textHeight: lineStartY,
         message: lines
