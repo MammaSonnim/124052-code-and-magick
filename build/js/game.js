@@ -474,8 +474,6 @@ window.Game = (function() {
       var message = textParams.message;
       var rectHeight = textHeight + Message.Rectangle.PADDING * 2;
 
-      console.log(message);
-
       if (endX > this.canvas.width) {
         startX -= endX - this.canvas.width + Message.Rectangle.SHIFT;
       }
