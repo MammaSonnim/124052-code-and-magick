@@ -15,7 +15,7 @@ window.Game = (function() {
 
   /**
    * Параметры для отрисовки игровых сообщений.
-   * @enum {number}
+   * @enum
    */
   var Message = {
     Rectangle: {
@@ -29,7 +29,7 @@ window.Game = (function() {
       POS_Y: 0
     },
     Text: {
-      WIDTH: 170,
+      WIDTH: 175,
       COLOR: '#000000',
       FONT_STYLE: '16px PT Mono',
       BASE_LINE: 'hanging',
@@ -433,13 +433,13 @@ window.Game = (function() {
      * Отрисовка текста.
      */
     _calcText: function(x, y, width, text) {
-      var words = text.split(' ');
+      var words = text.split(/ +/g);
       var line = '';
       var lines = [];
       var lineStartY = Message.Text.LINE_HEIGHT;
 
       for (var i = 0; i < words.length; i++) {
-        var tmpLine = line + words[i];
+        var tmpLine = line + (i ? ' ' : '') + words[i];
         var tmpLineWidth = this.ctx.measureText(tmpLine).width;
 
         if (tmpLineWidth > width) {
@@ -447,7 +447,6 @@ window.Game = (function() {
           line = words[i];
           lineStartY += Message.Text.LINE_HEIGHT;
         } else {
-          tmpLine = line + (i !== 0 ? ' ' : '') + words[i];
           line = tmpLine;
         }
       }
@@ -470,9 +469,12 @@ window.Game = (function() {
       var startX = this.state.objects[0].x + Message.Rectangle.POS_X;
       var startY = this.state.objects[0].y + Message.Rectangle.POS_Y;
       var endX = startX + Message.Rectangle.WIDTH;
-      var textHeight = this._calcText(startX + Message.Rectangle.PADDING, startY, Message.Text.WIDTH, text).textHeight;
+      var textParams = this._calcText(startX + Message.Rectangle.PADDING, startY, Message.Text.WIDTH, text);
+      var textHeight = textParams.textHeight;
+      var message = textParams.message;
       var rectHeight = textHeight + Message.Rectangle.PADDING * 2;
-      var message = this._calcText(startX + Message.Rectangle.PADDING, startY, Message.Text.WIDTH, text).message;
+
+      console.log(message);
 
       if (endX > this.canvas.width) {
         startX -= endX - this.canvas.width + Message.Rectangle.SHIFT;
