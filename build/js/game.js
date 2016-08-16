@@ -14,6 +14,30 @@ window.Game = (function() {
   var WIDTH = 700;
 
   /**
+   * Параметры для отрисовки игровых сообщений.
+   * @enum
+   */
+  var Message = {
+    Rectangle: {
+      WIDTH: 350,
+      SKEW: 10,
+      SHIFT: 10,
+      COLOR: '#ffffff',
+      SHADOW_COLOR: 'rgba(0, 0, 0, 0.7)',
+      PADDING: 20,
+      POS_X: 50,
+      POS_Y: 0
+    },
+    Text: {
+      WIDTH: 175,
+      COLOR: '#000000',
+      FONT_STYLE: '16px PT Mono',
+      BASE_LINE: 'hanging',
+      LINE_HEIGHT: 20
+    }
+  };
+
+  /**
    * ID уровней.
    * @enum {number}
    */
@@ -399,8 +423,8 @@ window.Game = (function() {
       this.ctx.beginPath();
       this.ctx.moveTo(x, y);
       this.ctx.lineTo(x + width, y);
-      this.ctx.lineTo(x + width, y + height);
-      this.ctx.lineTo(x - skew, y + height);
+      this.ctx.lineTo(x + width, y - height);
+      this.ctx.lineTo(x - skew, y - height);
       this.ctx.closePath();
       this.ctx.fill();
     },
@@ -408,45 +432,83 @@ window.Game = (function() {
     /**
      * Отрисовка текста.
      */
-    _drawText: function(x, y, text) {
-      var TEXT_COLOR = '#000000';
-      var FONT_STYLE = '16px PT Mono';
-      var BASE_LINE = 'hanging';
-      var LINE_HEIGHT = 20;
+    _calcText: function(x, y, width, text) {
+      var words = text.split(/ +/g);
+      var line = '';
+      var lines = [];
+      var lineStartY = Message.Text.LINE_HEIGHT;
 
-      this.ctx.fillStyle = TEXT_COLOR;
-      this.ctx.font = FONT_STYLE;
-      this.ctx.textBaseline = BASE_LINE;
-      for (var i = 0; i < text.length; i++) {
-        this.ctx.fillText(text[i], x, y + LINE_HEIGHT * i);
+      for (var i = 0; i < words.length; i++) {
+        var tmpLine = line + (i ? ' ' : '') + words[i];
+        var tmpLineWidth = this.ctx.measureText(tmpLine).width;
+
+        if (tmpLineWidth > width) {
+          lines.push(line);
+          line = words[i];
+          lineStartY += Message.Text.LINE_HEIGHT;
+        } else {
+          line = tmpLine;
+        }
       }
+      lines.push(line);
+
+      if (text === '') {
+        lineStartY = 0;
+      }
+
+      return {
+        textHeight: lineStartY,
+        message: lines
+      };
     },
 
     /**
      * Сборка прямоугольников и текста.
      */
     _getTextRect: function(text) {
-      var RECT_WIDTH = 350;
-      var RECT_HEIGHT = 100;
-      var RECT_SKEW = 10;
-      var RECT_SHIFT = 10;
-      var RECT_COLOR = '#ffffff';
-      var SHADOW_COLOR = 'rgba(0, 0, 0, 0.7)';
-      var TEXT_SHIFT = 15;
-      var startX = this.state.objects[0].x + 50;
-      var startY = this.state.objects[0].y - 100;
-      var endX = startX + RECT_WIDTH;
+      var startX = this.state.objects[0].x + Message.Rectangle.POS_X;
+      var startY = this.state.objects[0].y + Message.Rectangle.POS_Y;
+      var endX = startX + Message.Rectangle.WIDTH;
+      var textParams = this._calcText(startX + Message.Rectangle.PADDING, startY, Message.Text.WIDTH, text);
+      var textHeight = textParams.textHeight;
+      var message = textParams.message;
+      var rectHeight = textHeight + Message.Rectangle.PADDING * 2;
 
       if (endX > this.canvas.width) {
-        startX -= endX - this.canvas.width + RECT_SHIFT;
+        startX -= endX - this.canvas.width + Message.Rectangle.SHIFT;
       }
-      if (startY < 0) {
-        startY = 0;
+      if (startY < rectHeight) {
+        startY = rectHeight;
       }
 
-      this._drawRectangle(startX + RECT_SHIFT, startY + RECT_SHIFT, RECT_WIDTH, RECT_HEIGHT, RECT_SKEW, SHADOW_COLOR);
-      this._drawRectangle(startX, startY, RECT_WIDTH, RECT_HEIGHT, RECT_SKEW, RECT_COLOR);
-      this._drawText(startX + TEXT_SHIFT, startY + TEXT_SHIFT, text);
+      if (text !== '') {
+        this._drawRectangle(
+          startX + Message.Rectangle.SHIFT,
+          startY + Message.Rectangle.SHIFT,
+          Message.Rectangle.WIDTH,
+          rectHeight,
+          Message.Rectangle.SKEW,
+          Message.Rectangle.SHADOW_COLOR
+        );
+        this._drawRectangle(
+          startX,
+          startY,
+          Message.Rectangle.WIDTH,
+          rectHeight,
+          Message.Rectangle.SKEW,
+          Message.Rectangle.COLOR
+        );
+        this.ctx.fillStyle = Message.Text.COLOR;
+        this.ctx.font = Message.Text.FONT_STYLE;
+        this.ctx.textBaseline = Message.Text.BASE_LINE;
+        for (var i = 0; i < message.length; i++) {
+          this.ctx.fillText(
+            message[i],
+            startX + Message.Rectangle.PADDING,
+            startY - textHeight + Message.Text.LINE_HEIGHT * i - Message.Rectangle.PADDING
+          );
+        }
+      }
     },
 
     /**
@@ -455,35 +517,16 @@ window.Game = (function() {
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          this._getTextRect(
-            [
-              'Уровень затащен!'
-            ]
-          );
+          this._getTextRect('Уровень затащен!');
           break;
         case Verdict.FAIL:
-          this._getTextRect(
-            [
-              'Потрачено!'
-            ]
-          );
+          this._getTextRect('Потрачено!');
           break;
         case Verdict.PAUSE:
-          this._getTextRect(
-            [
-              'Игра на паузе',
-              '(пробел для продолжения)'
-            ]
-          );
+          this._getTextRect('Игра на паузе (пробел для продолжения)');
           break;
         case Verdict.INTRO:
-          this._getTextRect(
-            [
-              'Я Пендальф — великий, ужасный!',
-              'Я умею ходить и летать, а еще',
-              'могу пульнуть фаерболлом (shift).'
-            ]
-          );
+          this._getTextRect('Я Пендальф — великий и ужасный! Я умею ходить и летать, а еще могу пульнуть фаерболлом (shift).');
           break;
       }
     },
