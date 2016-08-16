@@ -1,4 +1,5 @@
 // config/npm-start.js
 module.exports = {
-  startLine: 'Hit CTRL-C to stop the server'
+  stopLine: 'Module parse failed:',
+  startLine: 'bundle is now VALID'
 };

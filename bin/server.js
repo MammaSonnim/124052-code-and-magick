@@ -2,19 +2,24 @@
 
 const express = require('express');
 const finalhandler = require('finalhandler');
-const path = require('path');
 const serveStatic = express.static;
+const webpack = require('webpack');
+const webpackMiddleware = require('webpack-dev-middleware');
+
+const config = require('./webpack.config.js');
 
 
 /** @constant {number} */
 const PORT = parseInt(process.argv[2], 10) || 1506;
 
 
-var serve = serveStatic(path.resolve(__dirname, '..', 'build'), {
-  'index': ['index.html']
-});
+var serve = serveStatic(config.devServer.contentBase, {'index': ['index.html', 'index.htm']});
 
+// Setup server and enable webpack as a middleware
 const app = express();
+const compiler = webpack(config);
+const middleware = webpackMiddleware(compiler, require('./middleware.config.js'));
+app.use(middleware);
 
 
 // Setup server routing
