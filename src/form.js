@@ -2,15 +2,17 @@
 
 window.form = (function() {
   var STARS_MIN = 3;
-  var NAME_MASK = /[а-яА-Яa-zA-Z0-9\- ]+/g;
+  // var NAME_MASK = /[а-яА-Яa-zA-Z0-9\- ]+/g;
   var formContainer = document.querySelector('.overlay-container');
   var reviewForm = document.querySelector('.review-form');
+  var formStars = reviewForm.elements['review-mark'];
   var formCloseButton = reviewForm.querySelector('.review-form-close');
   var formSubmitButton = reviewForm.querySelector('.review-submit');
-  var inputName = reviewForm.elements['review-name'];
-  var inputReview = reviewForm.elements['review-text'];
-  var formStars = reviewForm.elements['review-mark'];
-  var checkedStar;
+  var nameInput = reviewForm.elements['review-name'];
+  var textInput = reviewForm.elements['review-text'];
+  // var textInput = document.querySelector('.review-text');
+  var nameIndicator = reviewForm.querySelector('.review-fields-name');
+  var textIndicator = reviewForm.querySelector('.review-fields-text');
 
   var form = {
     onClose: null,
@@ -48,41 +50,72 @@ window.form = (function() {
       }
     },
 
-    addRequired: function (source, target, minValue) {
-      checkedStar = formStars.value;
-
-      if (+source <= minValue && !target.getAttribute('required')) {
-        target.setAttribute('required', 'required')
+    toggleRequired: function(target, source, minValue) {
+      if (source && minValue) {
+        var rating = source.value;
+        if (rating < minValue) {
+          textInput.setAttribute('required', 'required');
+        } else {
+          textInput.removeAttribute('required', 'required');
+        }
       }
-      target.removeAttribute('required', 'required')
     },
 
-    validateRequired: function (input) {
+    validateRequired: function(input) {
       if (input.hasAttribute('required')) {
-        return this.isValid = input.value() ? true : false;
+        return (!!input.value);
       }
-      return this.isValid = true;
+      return true;
     },
 
-    validateMasked: function (input, mask) {
-      if (mask) {
-        return this.isValid = mask.test(input) ? true : false;
-      }
-      return this.isValid = true;
-    },
+    // validateMasked: function(input, mask) {
+    //   if (mask) {
+    //     console.log(mask.test(input));
+    //     return mask.test(input);
+    //   }
+    //   return true;
+    // },
 
-    validateInput: function (input, mask, indicator) {
-      if  (this.validateRequired(input) && this.validateMasked(input, mask)) {
-        indicator.classList.add('hide');
+    validate: function(input, indicator, source, minValue) {
+      this.toggleRequired(input, source, minValue);
+
+      if (this.validateRequired(input)) {
+        indicator.classList.add('invisible');
         this.isValid = true;
+      } else {
+        indicator.classList.remove('invisible');
+        this.isValid = false;
       }
-      indicator.classList.remove('hide');
+
+      if (form.isValid) {
+        this.enable();
+      }
+      this.disable();
     }
   };
 
-  form.disable();
+  // function addListeners(form, input) {
+  //   function onInput() {
+  //     form.validate(input, mask, indicator, source, minValue);
+  //   }
+  //   input.addEventListener('input', onInput);
+  // }
 
-  form.onsubmit = function(evt) {
+  nameInput.setAttribute('required', 'required');
+
+  reviewForm.onclick = function() {
+    form.validate(textInput, textIndicator, formStars, STARS_MIN);
+    // form.validate(nameInput, nameIndicator);
+  };
+
+  reviewForm.oninput = function() {
+    form.validate(textInput, textIndicator, formStars, STARS_MIN);
+    // form.validate(nameInput, nameIndicator);
+  };
+
+
+
+  reviewForm.onsubmit = function(evt) {
     evt.preventDefault();
   };
 
