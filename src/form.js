@@ -2,7 +2,6 @@
 
 window.form = (function() {
   var STARS_MIN = 3;
-  // var NAME_MASK = /[а-яА-Яa-zA-Z0-9\- ]+/g;
   var formContainer = document.querySelector('.overlay-container');
   var reviewForm = document.querySelector('.review-form');
   var formStars = reviewForm.elements['review-mark'];
@@ -10,20 +9,23 @@ window.form = (function() {
   var formSubmitButton = reviewForm.querySelector('.review-submit');
   var nameInput = reviewForm.elements['review-name'];
   var textInput = reviewForm.elements['review-text'];
-  // var textInput = document.querySelector('.review-text');
+  var formIndicators = reviewForm.querySelector('.review-fields');
   var nameIndicator = reviewForm.querySelector('.review-fields-name');
   var textIndicator = reviewForm.querySelector('.review-fields-text');
 
   var form = {
     onClose: null,
     isValid: false,
-    isDisabled: true,
+    isDisabled: false,
 
     /**
      * @param {Function} cb
      */
     open: function(cb) {
       formContainer.classList.remove('invisible');
+      nameInput.setAttribute('required', 'required');
+      textIndicator.classList.add('invisible');
+      this.disable();
       cb();
     },
 
@@ -36,17 +38,19 @@ window.form = (function() {
     },
 
     disable: function() {
-      if (form.isDisabled) {
+      if (this.isDisabled) {
         return;
       }
-      form.isDisabled = true;
+      this.isDisabled = true;
       formSubmitButton.setAttribute('disabled', 'disabled');
+      formIndicators.classList.remove('invisible');
     },
 
     enable: function() {
       if (form.isDisabled) {
         form.isDisabled = false;
         formSubmitButton.removeAttribute('disabled', 'disabled');
+        formIndicators.classList.add('invisible');
       }
     },
 
@@ -61,59 +65,36 @@ window.form = (function() {
       }
     },
 
-    validateRequired: function(input) {
-      if (input.hasAttribute('required')) {
-        return (!!input.value);
-      }
-      return true;
-    },
-
-    // validateMasked: function(input, mask) {
-    //   if (mask) {
-    //     console.log(mask.test(input));
-    //     return mask.test(input);
-    //   }
-    //   return true;
-    // },
-
-    validate: function(input, indicator, source, minValue) {
+    validateInput: function(input, indicator, source, minValue) {
       this.toggleRequired(input, source, minValue);
 
-      if (this.validateRequired(input)) {
-        indicator.classList.add('invisible');
-        this.isValid = true;
-      } else {
-        indicator.classList.remove('invisible');
-        this.isValid = false;
+      if (input.hasAttribute('required')) {
+        if (input.value) {
+          indicator.classList.add('invisible');
+          this.isValid = true;
+        } else {
+          indicator.classList.remove('invisible');
+          this.isValid = false;
+        }
       }
 
-      if (form.isValid) {
+      if (this.isValid) {
         this.enable();
+      } else {
+        this.disable();
       }
-      this.disable();
     }
   };
 
-  // function addListeners(form, input) {
-  //   function onInput() {
-  //     form.validate(input, mask, indicator, source, minValue);
-  //   }
-  //   input.addEventListener('input', onInput);
-  // }
-
-  nameInput.setAttribute('required', 'required');
-
   reviewForm.onclick = function() {
-    form.validate(textInput, textIndicator, formStars, STARS_MIN);
-    // form.validate(nameInput, nameIndicator);
+    form.validateInput(nameInput, nameIndicator);
+    form.validateInput(textInput, textIndicator, formStars, STARS_MIN);
   };
 
   reviewForm.oninput = function() {
-    form.validate(textInput, textIndicator, formStars, STARS_MIN);
-    // form.validate(nameInput, nameIndicator);
+    form.validateInput(nameInput, nameIndicator);
+    form.validateInput(textInput, textIndicator, formStars, STARS_MIN);
   };
-
-
 
   reviewForm.onsubmit = function(evt) {
     evt.preventDefault();
