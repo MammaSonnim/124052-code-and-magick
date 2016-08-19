@@ -23,8 +23,7 @@ window.form = (function() {
     open: function(cb) {
       formContainer.classList.remove('invisible');
       nameInput.required = true;
-      textIndicator.classList.add('invisible');
-      this.setValid(false);
+      this.onchange();
       cb();
     },
 
@@ -70,7 +69,10 @@ window.form = (function() {
      * @param {HTMLInputElement} input
      */
     isInputValid: function(input) {
-      return input.required && !!input.value;
+      if (input.required) {
+        return !!input.value;
+      }
+      return true;
     },
 
     /**
