@@ -15,17 +15,16 @@ window.form = (function() {
 
   var form = {
     onClose: null,
-    isValid: false,
-    isDisabled: false,
+    isValid: true,
 
     /**
      * @param {Function} cb
      */
     open: function(cb) {
       formContainer.classList.remove('invisible');
-      nameInput.setAttribute('required', 'required');
+      nameInput.required = true;
       textIndicator.classList.add('invisible');
-      this.disable();
+      this.setValid(false);
       cb();
     },
 
@@ -37,63 +36,78 @@ window.form = (function() {
       }
     },
 
-    disable: function() {
-      if (this.isDisabled) {
-        return;
-      }
-      this.isDisabled = true;
-      formSubmitButton.setAttribute('disabled', 'disabled');
-      formIndicators.classList.remove('invisible');
-    },
-
-    enable: function() {
-      if (!this.isDisabled) {
-        return;
-      }
-      this.isDisabled = false;
-      formSubmitButton.removeAttribute('disabled');
-      formIndicators.classList.add('invisible');
-    },
-
-    toggleInputRequired: function(target, mark, minValue) {
-      if (mark && minValue) {
-        var rating = mark.value;
-        if (rating < minValue) {
-          textInput.setAttribute('required', 'required');
-        } else {
-          textInput.removeAttribute('required');
-        }
+    /**
+     * Set 'disable' attribute on form-button
+     * and toggle class on form-indicators by 'valid' param.
+     * @param {boolean} valid
+     */
+    setValid: function(valid) {
+      if (this.isValid !== valid) {
+        this.isValid = valid;
+        formSubmitButton.disabled = !valid;
+        this.toggleClass(formIndicators, 'invisible', valid);
       }
     },
 
-    validateInput: function(input, indicator) {
-      if (input.hasAttribute('required')) {
-        if (input.value) {
-          indicator.classList.add('invisible');
-          this.isValid = true;
-        } else {
-          indicator.classList.remove('invisible');
-          this.isValid = false;
-        }
-      }
-
-      if (this.isValid) {
-        this.enable();
+    /**
+     * Toggle class on element by 'statement' param.
+     * IE doesn't support classList.toggle at all,
+     * so method uses add/remove instead.
+     * @param {HTMLElement} element
+     * @param {string} className
+     * @param {boolean} statement
+     */
+    toggleClass: function(element, className, statement) {
+      if (statement) {
+        element.classList.add(className);
       } else {
-        this.disable();
+        element.classList.remove(className);
       }
+    },
+
+    /**
+     * Check if input valid.
+     * @param {HTMLInputElement} input
+     */
+    isInputValid: function(input) {
+      return input.required && !!input.value;
+    },
+
+    /**
+     * Validate inputs.
+     */
+    validate: function() {
+      this.toggleClass(nameIndicator, 'invisible', this.isInputValid(nameInput));
+      this.toggleClass(textIndicator, 'invisible', this.isInputValid(textInput));
+    },
+
+    /**
+     * Actions for onchange event.
+     * Set required attribute on textInput by check of rating.
+     * Validate inputs and form.
+     */
+    onchange: function() {
+      textInput.required = !!formMark && formMark.value < STARS_MIN;
+      this.validate();
+      this.setValid(this.isInputValid(nameInput) && this.isInputValid(textInput));
+    },
+
+    /**
+     * Actions for oninput event.
+     * Validate inputs and form.
+     */
+    oninput: function() {
+      this.validate();
+      this.setValid(this.isInputValid(nameInput) && this.isInputValid(textInput));
     }
   };
 
   reviewForm.onchange = function() {
-    form.toggleInputRequired(textInput, formMark, STARS_MIN);
-    form.validateInput(nameInput, nameIndicator);
-    form.validateInput(textInput, textIndicator);
+    form.onchange();
   };
 
   reviewForm.oninput = function() {
-    form.validateInput(nameInput, nameIndicator);
-    form.validateInput(textInput, textIndicator);
+    form.oninput();
   };
 
   reviewForm.onsubmit = function(evt) {
