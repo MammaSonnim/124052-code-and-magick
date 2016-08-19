@@ -36,19 +36,6 @@ window.form = (function() {
     },
 
     /**
-     * Set 'disable' attribute on form-button
-     * and toggle class on form-indicators by 'valid' param.
-     * @param {boolean} valid
-     */
-    setValid: function(valid) {
-      if (this.isValid !== valid) {
-        this.isValid = valid;
-        formSubmitButton.disabled = !valid;
-        this.toggleClass(formIndicators, 'invisible', valid);
-      }
-    },
-
-    /**
      * Toggle class on element by 'statement' param.
      * IE doesn't support classList.toggle at all,
      * so method uses add/remove instead.
@@ -76,11 +63,29 @@ window.form = (function() {
     },
 
     /**
+     * Set 'disable' attribute on form-button
+     * and toggle class on form-indicators by 'valid' param.
+     * @param {boolean} valid
+     */
+    setValid: function(valid) {
+      if (this.isValid !== valid) {
+        this.isValid = valid;
+        formSubmitButton.disabled = !valid;
+        this.toggleClass(formIndicators, 'invisible', valid);
+      }
+    },
+
+    /**
      * Validate inputs.
      */
     validate: function() {
-      this.toggleClass(nameIndicator, 'invisible', this.isInputValid(nameInput));
-      this.toggleClass(textIndicator, 'invisible', this.isInputValid(textInput));
+      var isNameValid = this.isInputValid(nameInput);
+      var isTextValid = this.isInputValid(textInput);
+
+      this.toggleClass(nameIndicator, 'invisible', isNameValid);
+      this.toggleClass(textIndicator, 'invisible', isTextValid);
+
+      this.setValid(isNameValid && isTextValid);
     },
 
     /**
@@ -91,7 +96,6 @@ window.form = (function() {
     onchange: function() {
       textInput.required = !!formMark && formMark.value < STARS_MIN;
       this.validate();
-      this.setValid(this.isInputValid(nameInput) && this.isInputValid(textInput));
     },
 
     /**
@@ -100,7 +104,6 @@ window.form = (function() {
      */
     oninput: function() {
       this.validate();
-      this.setValid(this.isInputValid(nameInput) && this.isInputValid(textInput));
     }
   };
 
