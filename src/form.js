@@ -76,7 +76,7 @@ window.form = (function() {
     },
 
     /**
-     * Validate inputs.
+     * Validate inputs, and set state of form.
      */
     validate: function() {
       var isNameValid = this.isInputValid(nameInput);
@@ -91,7 +91,7 @@ window.form = (function() {
     /**
      * Actions for onchange event.
      * Set required attribute on textInput by check of rating.
-     * Validate inputs and form.
+     * Validate form.
      */
     onchange: function() {
       textInput.required = !!formMark && formMark.value < STARS_MIN;
@@ -100,7 +100,7 @@ window.form = (function() {
 
     /**
      * Actions for oninput event.
-     * Validate inputs and form.
+     * Validate form.
      */
     oninput: function() {
       this.validate();
