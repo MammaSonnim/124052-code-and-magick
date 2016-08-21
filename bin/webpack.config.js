@@ -20,7 +20,7 @@ module.exports = {
   entry: path.resolve(projectRoot, SRC_DIRNAME, 'main.js'),
 
   output: {
-    filename: "js/main.js",
+    filename: 'js/main.js',
     path: path.resolve(projectRoot, OUTPUT_DIRNAME),
     outputPath: '/',
     sourceMapFilename: "[file].map"
