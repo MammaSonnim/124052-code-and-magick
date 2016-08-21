@@ -12,10 +12,21 @@ window.form = (function() {
   var formIndicators = reviewForm.querySelector('.review-fields');
   var nameIndicator = reviewForm.querySelector('.review-fields-name');
   var textIndicator = reviewForm.querySelector('.review-fields-text');
+  var cookies = require('browser-cookies');
 
   var form = {
     onClose: null,
     isValid: true,
+
+    /**
+     * Date params for cookies.
+     * @enum
+     */
+    date: {
+      MS_IN_DAY: 1000 * 60 * 60 * 24,
+      DATE_DAY: 9,
+      DATE_MONTH: 11
+    },
 
     /**
      * @param {Function} cb
@@ -23,12 +34,23 @@ window.form = (function() {
     open: function(cb) {
       formContainer.classList.remove('invisible');
       nameInput.required = true;
+      formIndicators.classList.add('invisible');
+      this.pasteCookies();
       this.onchange();
       cb();
     },
 
+    /**
+     * On close remove attributes, switch classes
+     * and clear form.
+     */
     close: function() {
       formContainer.classList.add('invisible');
+      nameInput.required = false;
+      if (formIndicators.classList.contains('invisible')) {
+        formIndicators.classList.remove('invisible');
+      }
+      reviewForm.reset();
 
       if (typeof this.onClose === 'function') {
         this.onClose();
@@ -89,6 +111,41 @@ window.form = (function() {
     },
 
     /**
+     * Calc expire date of cookies.
+     */
+    calcExpireDate: function() {
+      var now = new Date(2016, 11, 8);
+      var yearNow = now.getFullYear();
+      var date = new Date(yearNow, this.date.DATE_MONTH, this.date.DATE_DAY);
+      var diff;
+      var expireDate;
+
+      if (now < date) {
+        date.setFullYear(yearNow - 1);
+      }
+
+      diff = now - date;
+      expireDate = Math.floor(diff / this.date.MS_IN_DAY);
+      return expireDate;
+    },
+
+    /**
+     * Set cookies.
+     */
+    setCookies: function() {
+      cookies.set('name', nameInput.value, {expires: this.calcExpireDate()});
+      cookies.set('mark', formMark.value, {expires: this.calcExpireDate()});
+    },
+
+    /**
+     * Return cookies value and paste it to form.
+     */
+    pasteCookies: function() {
+      nameInput.value = cookies.get('name');
+      formMark.value = cookies.get('mark');
+    },
+
+    /**
      * Actions for onchange event.
      * Set required attribute on textInput by check of rating.
      * Validate form.
@@ -115,8 +172,8 @@ window.form = (function() {
     form.oninput();
   };
 
-  reviewForm.onsubmit = function(evt) {
-    evt.preventDefault();
+  reviewForm.onsubmit = function() {
+    form.setCookies();
   };
 
   formCloseButton.onclick = function(evt) {
