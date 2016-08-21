@@ -114,7 +114,7 @@ window.form = (function() {
      * Calc expire date of cookies.
      */
     calcExpireDate: function() {
-      var now = new Date(2016, 11, 8);
+      var now = new Date();
       var yearNow = now.getFullYear();
       var date = new Date(yearNow, this.date.DATE_MONTH, this.date.DATE_DAY);
       var diff;
@@ -133,8 +133,10 @@ window.form = (function() {
      * Set cookies.
      */
     setCookies: function() {
-      cookies.set('name', nameInput.value, {expires: this.calcExpireDate()});
-      cookies.set('mark', formMark.value, {expires: this.calcExpireDate()});
+      var expireDate = this.calcExpireDate();
+
+      cookies.set('name', nameInput.value, {expires: expireDate});
+      cookies.set('mark', formMark.value, {expires: expireDate});
     },
 
     /**
