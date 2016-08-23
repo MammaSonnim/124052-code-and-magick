@@ -1,9 +1,36 @@
 'use strict';
 
 window.form = (function() {
-  var STARS_MIN = 3;
+  var browserCookies = require('browser-cookies');
+
+  /**
+   * @const
+   * @type {number}
+   */
   var MS_IN_DAY = 1000 * 60 * 60 * 24;
+
+  /**
+   * Date (ISO 8601)
+   * @const
+   * @type {string}
+   */
   var GRACE_BIRTHDAY = '1906-12-09';
+
+  /**
+   * @const
+   * @type {number}
+   */
+  var STARS_MIN = 3;
+
+  /**
+   * Cookies names
+   * @enum {string}
+   */
+  var ReviewCookies = {
+    MARK: 'review-mark',
+    NAME: 'review-name'
+  };
+
   var formContainer = document.querySelector('.overlay-container');
   var reviewForm = document.querySelector('.review-form');
   var formMark = reviewForm.elements['review-mark'];
@@ -14,7 +41,6 @@ window.form = (function() {
   var formIndicators = reviewForm.querySelector('.review-fields');
   var nameIndicator = reviewForm.querySelector('.review-fields-name');
   var textIndicator = reviewForm.querySelector('.review-fields-text');
-  var cookies = require('browser-cookies');
 
   var form = {
     onClose: null,
@@ -68,9 +94,10 @@ window.form = (function() {
     /**
      * Check if input valid.
      * @param {HTMLInputElement} input
+     * @return {boolean}
      */
     isInputValid: function(input) {
-      return !input.required || input.value;
+      return !input.required || !!input.value;
     },
 
     /**
@@ -102,11 +129,12 @@ window.form = (function() {
     /**
      * Calc expire date of cookies by date param.
      * @param {string} date
+     * @return {number}
      */
-    calcExpireDate: function(date) {
+    getDaysToExpire: function(date) {
       var now = new Date();
       var yearNow = now.getFullYear();
-      var benchmark = new Date(Date.parse(date));
+      var benchmark = new Date(date);
 
       benchmark.setFullYear(yearNow);
       if (now < benchmark) {
@@ -115,22 +143,19 @@ window.form = (function() {
       return Math.floor((now - benchmark) / MS_IN_DAY);
     },
 
-    /**
-     * Set cookies.
-     */
     setCookies: function() {
-      var expireDate = this.calcExpireDate(GRACE_BIRTHDAY);
+      var daysToExpire = this.getDaysToExpire(GRACE_BIRTHDAY);
 
-      cookies.set('name', nameInput.value, {expires: expireDate});
-      cookies.set('mark', formMark.value, {expires: expireDate});
+      browserCookies.set(ReviewCookies.NAME, nameInput.value, {expires: daysToExpire});
+      browserCookies.set(ReviewCookies.MARK, formMark.value, {expires: daysToExpire});
     },
 
     /**
-     * Return cookies value and apply it to form.
+     * Get cookies value and apply it to form.
      */
     applyCookies: function() {
-      nameInput.value = cookies.get('name');
-      formMark.value = cookies.get('mark');
+      nameInput.value = browserCookies.get(ReviewCookies.NAME || '');
+      formMark.value = browserCookies.get(ReviewCookies.MARK);
     },
 
     /**
