@@ -155,7 +155,7 @@ window.form = (function() {
      */
     applyCookies: function() {
       nameInput.value = browserCookies.get(ReviewCookies.NAME || '');
-      formMark.value = browserCookies.get(ReviewCookies.MARK);
+      formMark.value = browserCookies.get(ReviewCookies.MARK || STARS_MIN);
     },
 
     /**
@@ -185,7 +185,8 @@ window.form = (function() {
     form.oninput();
   };
 
-  reviewForm.onsubmit = function() {
+  reviewForm.onsubmit = function(evt) {
+    evt.preventDefault();
     form.setCookies();
   };
 
