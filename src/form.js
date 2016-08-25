@@ -1,7 +1,36 @@
 'use strict';
 
 window.form = (function() {
+  var browserCookies = require('browser-cookies');
+
+  /**
+   * @const
+   * @type {number}
+   */
+  var MS_IN_DAY = 1000 * 60 * 60 * 24;
+
+  /**
+   * Date (ISO 8601)
+   * @const
+   * @type {string}
+   */
+  var GRACE_BIRTHDAY = '1906-12-09';
+
+  /**
+   * @const
+   * @type {number}
+   */
   var STARS_MIN = 3;
+
+  /**
+   * Cookies names
+   * @enum {string}
+   */
+  var ReviewCookies = {
+    MARK: 'review-mark',
+    NAME: 'review-name'
+  };
+
   var formContainer = document.querySelector('.overlay-container');
   var reviewForm = document.querySelector('.review-form');
   var formMark = reviewForm.elements['review-mark'];
@@ -23,12 +52,23 @@ window.form = (function() {
     open: function(cb) {
       formContainer.classList.remove('invisible');
       nameInput.required = true;
+      formIndicators.classList.add('invisible');
+      this.applyCookies();
       this.onchange();
       cb();
     },
 
+    /**
+     * On close remove attributes, switch classes
+     * and clear form.
+     */
     close: function() {
       formContainer.classList.add('invisible');
+      nameInput.required = false;
+      if (formIndicators.classList.contains('invisible')) {
+        formIndicators.classList.remove('invisible');
+      }
+      reviewForm.reset();
 
       if (typeof this.onClose === 'function') {
         this.onClose();
@@ -54,12 +94,10 @@ window.form = (function() {
     /**
      * Check if input valid.
      * @param {HTMLInputElement} input
+     * @return {boolean}
      */
     isInputValid: function(input) {
-      if (input.required) {
-        return !!input.value;
-      }
-      return true;
+      return !input.required || !!input.value;
     },
 
     /**
@@ -86,6 +124,38 @@ window.form = (function() {
       this.toggleClass(textIndicator, 'invisible', isTextValid);
 
       this.setValid(isNameValid && isTextValid);
+    },
+
+    /**
+     * Calc expire date of cookies by date param.
+     * @param {string} date
+     * @return {number}
+     */
+    getDaysToExpire: function(date) {
+      var now = new Date();
+      var yearNow = now.getFullYear();
+      var benchmark = new Date(date);
+
+      benchmark.setFullYear(yearNow);
+      if (now < benchmark) {
+        benchmark.setFullYear(yearNow - 1);
+      }
+      return Math.floor((now - benchmark) / MS_IN_DAY);
+    },
+
+    setCookies: function() {
+      var daysToExpire = this.getDaysToExpire(GRACE_BIRTHDAY);
+
+      browserCookies.set(ReviewCookies.NAME, nameInput.value, {expires: daysToExpire});
+      browserCookies.set(ReviewCookies.MARK, formMark.value, {expires: daysToExpire});
+    },
+
+    /**
+     * Get cookies value and apply it to form.
+     */
+    applyCookies: function() {
+      nameInput.value = browserCookies.get(ReviewCookies.NAME || '');
+      formMark.value = browserCookies.get(ReviewCookies.MARK || STARS_MIN);
     },
 
     /**
@@ -117,6 +187,7 @@ window.form = (function() {
 
   reviewForm.onsubmit = function(evt) {
     evt.preventDefault();
+    form.setCookies();
   };
 
   formCloseButton.onclick = function(evt) {
