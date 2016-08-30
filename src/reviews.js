@@ -1,19 +1,18 @@
 'use strict';
 
 var REVIEWS_LOAD_URL = 'http://localhost:1506/api/reviews';
-
-var load = function(url, callback) {
-    var callbackName = 'cb' + Date.now();
-
-    window[callbackName] = function(data) {
-        callback(data);
-    }
-
-    var script = document.createElement('script');
-    script.src = url + '?callback=' + callbackName;
-    document.body.appendChild(script);
+var callback = function(data) {
+  console.log(data);
 };
 
-load(REVIEWS_LOAD_URL, function(data) {
-    console.log(data);
-}, '__jsonpCallback');
+var loadReviews = function(url, cb) {
+  var callbackName = 'cb' + Date.now();
+
+  window[callbackName] = cb;
+
+  var script = document.createElement('script');
+  script.src = url + '?callback=' + callbackName;
+  document.body.appendChild(script);
+};
+
+loadReviews(REVIEWS_LOAD_URL, callback);
