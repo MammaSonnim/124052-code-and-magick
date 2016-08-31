@@ -2,9 +2,7 @@
 
 window.CallbackRegistry = {};
 var REVIEWS_LOAD_URL = 'http://localhost:1506/api/reviews';
-var callback = function(data) {
-  console.log(data);
-};
+var loadedReviews = null;
 
 var loadReviews = function(url, cb) {
   var callbackName = 'cb' + Date.now();
@@ -15,9 +13,14 @@ var loadReviews = function(url, cb) {
 
   window.CallbackRegistry[callbackName] = function(data) {
     cb(data);
-    delete window.CallbackRegistry;
+    delete window.CallbackRegistry[callbackName];
     document.body.removeChild(script);
   };
+};
+
+var callback = function(data) {
+  loadedReviews = data;
+  console.log(loadedReviews);
 };
 
 loadReviews(REVIEWS_LOAD_URL, callback);
