@@ -2,7 +2,6 @@
 
 window.CallbackRegistry = {};
 var REVIEWS_LOAD_URL = 'http://localhost:1506/api/reviews?callback=CallbackRegistry.{name}';
-var reviews = null;
 
 var jsonp = function(url, cb) {
   var callbackName = 'cb' + Date.now();
@@ -19,5 +18,5 @@ var jsonp = function(url, cb) {
 };
 
 jsonp(REVIEWS_LOAD_URL, function(data) {
-  reviews = data;
+  window.reviews = data;
 });
