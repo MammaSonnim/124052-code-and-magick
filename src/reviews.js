@@ -1,14 +1,14 @@
 'use strict';
 
 window.CallbackRegistry = {};
-var REVIEWS_LOAD_URL = 'http://localhost:1506/api/reviews';
-var loadedReviews = null;
+var REVIEWS_LOAD_URL = 'http://localhost:1506/api/reviews?callback=CallbackRegistry.{name}';
+var reviews = null;
 
-var loadReviews = function(url, cb) {
+var jsonp = function(url, cb) {
   var callbackName = 'cb' + Date.now();
   var script = document.createElement('script');
 
-  script.src = url + '?callback=CallbackRegistry.' + callbackName;
+  script.src = REVIEWS_LOAD_URL.replace('{name}', callbackName);
   document.body.appendChild(script);
 
   window.CallbackRegistry[callbackName] = function(data) {
@@ -18,9 +18,6 @@ var loadReviews = function(url, cb) {
   };
 };
 
-var callback = function(data) {
-  loadedReviews = data;
-  console.log(loadedReviews);
-};
-
-loadReviews(REVIEWS_LOAD_URL, callback);
+jsonp(REVIEWS_LOAD_URL, function(data) {
+  reviews = data;
+});
