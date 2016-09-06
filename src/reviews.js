@@ -24,7 +24,7 @@ var getReviewElement = function(review) {
   var AUTHOR_IMG_SIZE = 124;
   var IMG_LOAD_TIMEOUT = 10000;
   var reviewElement = reviewSource.cloneNode(true);
-  var reviewRatingClassname = translateStringToNum(review.rating);
+  var reviewRatingClassname = translateNumToString(review.rating);
   var reviewAuthor = reviewElement.querySelector('.review-author');
   var image = new Image();
 
@@ -65,7 +65,7 @@ var renderReviews = function(data) {
   });
 };
 
-var translateStringToNum = function(number) {
+var translateNumToString = function(number) {
   var result;
 
   switch (number) {
