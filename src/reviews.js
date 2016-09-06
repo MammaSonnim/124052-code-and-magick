@@ -60,7 +60,7 @@ var getReviewElement = function(review) {
 
 var renderReviews = function(data) {
   window.reviews = data;
-  reviews.forEach(function(review) {
+  window.reviews.forEach(function(review) {
     reviewsContainer.appendChild(getReviewElement(review));
   });
 };
