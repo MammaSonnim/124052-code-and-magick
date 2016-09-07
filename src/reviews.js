@@ -3,6 +3,7 @@
 window.CallbackRegistry = {};
 var REVIEWS_LOAD_URL = 'http://localhost:1506/api/reviews?callback=CallbackRegistry.{name}';
 var reviewsContainer = document.querySelector('.reviews-list');
+var reviewsFilter = document.querySelector('.reviews-filter');
 var template = document.getElementById('review-template');
 var reviewSource = (template.content || template).querySelector('.review');
 
@@ -52,6 +53,8 @@ var getReviewElement = function(review) {
 
   var imageLoadTimeout = setTimeout(function() {
     image.src = '';
+    image.onerror = null;
+    image.onload = null;
     reviewElement.classList.add('review-load-failure');
   }, IMG_LOAD_TIMEOUT);
 
@@ -59,10 +62,12 @@ var getReviewElement = function(review) {
 };
 
 var renderReviews = function(data) {
+  reviewsFilter.classList.add('invisible');
   window.reviews = data;
   window.reviews.forEach(function(review) {
     reviewsContainer.appendChild(getReviewElement(review));
   });
+  reviewsFilter.classList.remove('invisible');
 };
 
 var translateNumToString = function(number) {
