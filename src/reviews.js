@@ -34,7 +34,7 @@ var createReviewElement = function(review) {
   var image = new Image();
 
   reviewElement.querySelector('.review-text').textContent = review.description;
-  if (ratingMap[review.rating]) {
+  if (ratingMap[review.rating - 2]) {
     reviewElement.querySelector('.review-rating').classList.add('review-rating-' + ratingMap[review.rating - 2]);
   }
   reviewAuthor.title = review.author.name;
