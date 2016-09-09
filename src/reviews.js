@@ -49,7 +49,7 @@ function jsonp(cb) {
   script.src = REVIEWS_LOAD_URL.replace('{name}', callbackName);
 }
 
-var createReviewElement = function(review) {
+function createReviewElement(review) {
   var reviewElement = reviewSource.cloneNode(true);
   var reviewAuthor = reviewElement.querySelector('.review-author');
   var image = new Image();
@@ -83,5 +83,4 @@ var createReviewElement = function(review) {
   }, IMG_LOAD_TIMEOUT);
 
   return reviewElement;
-};
-
+}
