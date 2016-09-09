@@ -1,8 +1,6 @@
 'use strict';
 
-window.form = (function() {
-  var browserCookies = require('browser-cookies');
-
+define(['browser-cookies'], function(browserCookies) {
   /**
    * @const
    * @type {number}
@@ -196,4 +194,4 @@ window.form = (function() {
   };
 
   return form;
-})();
+});
