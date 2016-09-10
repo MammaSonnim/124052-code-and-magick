@@ -4,7 +4,6 @@ define([
   './load',
   './review'
 ], function(load, createReviewElement) {
-
   var reviewsContainer = document.querySelector('.reviews-list');
   var reviewsFilter = document.querySelector('.reviews-filter');
 
@@ -21,4 +20,3 @@ define([
     reviewsFilter.classList.remove('invisible');
   });
 });
-
