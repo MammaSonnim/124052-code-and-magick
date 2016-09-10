@@ -1,14 +1,16 @@
 'use strict';
 
-define(['./load', './review'], function(load, createReviewElement) {
-
+define([
+  './load',
+  './review'
+], function(load, createReviewElement) {
 
   var reviewsContainer = document.querySelector('.reviews-list');
   var reviewsFilter = document.querySelector('.reviews-filter');
 
   reviewsFilter.classList.add('invisible');
 
-  jsonp(function(error, data) {
+  load(function(error, data) {
     if (error) {
       console.log('error script!');
     } else {
@@ -18,9 +20,5 @@ define(['./load', './review'], function(load, createReviewElement) {
     }
     reviewsFilter.classList.remove('invisible');
   });
-
-
-
-
 });
 

@@ -3,7 +3,7 @@
 define([
   './form',
   './game',
-  './reviews',
+  './reviews'
 ], function(form, Game) {
   var game = new Game(document.querySelector('.demo'));
   game.initializeLevelAndStart();

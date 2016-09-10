@@ -1,6 +1,8 @@
 'use strict';
 
-define(['browser-cookies'], function(browserCookies) {
+define([
+  'browser-cookies'
+], function(browserCookies) {
   /**
    * @const
    * @type {number}
