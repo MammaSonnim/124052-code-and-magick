@@ -12,10 +12,13 @@ define(function() {
     this.totalPicturesCount.innerHTML = this.pictures.length;
     this.closeBtn = this.overlay.querySelector('.overlay-gallery-close');
     this.picturePreview = this.overlay.querySelector('.overlay-gallery-preview');
+    this.currentPicture = null;
   };
 
   Gallery.prototype.show = function(number) {
     var self = this;
+    this.currentPicture = new Image();
+    this.picturePreview.appendChild(this.currentPicture);
 
     this.closeBtn.onclick = function() {
       self.onCloseBtnClick();
@@ -35,18 +38,12 @@ define(function() {
     this.closeBtn.onclick = null;
     this.leftBtn.onclick = null;
     this.rightBtn.onclick = null;
+    this.currentPicture = null;
   };
 
   Gallery.prototype.setActivePicture = function(number) {
     this.activePicture = number;
-    var currentPicture = new Image();
-    currentPicture.src = this.pictures[number];
-    var prevPicture = this.picturePreview.querySelector('img');
-    if (prevPicture) {
-      this.picturePreview.replaceChild(currentPicture, prevPicture);
-    } else {
-      this.picturePreview.appendChild(currentPicture);
-    }
+    this.currentPicture.src = this.pictures[number];
     this.currentPictureCount.innerHTML = number + 1;
   };
 
@@ -61,7 +58,8 @@ define(function() {
   };
 
   Gallery.prototype.onRightBtnClick = function() {
-    if (this.activePicture < this.pictures.length - 1) {
+    var picturesTotal = this.pictures.length;
+    if (this.activePicture < picturesTotal - 1) {
       this.setActivePicture(this.activePicture + 1);
     }
   };
