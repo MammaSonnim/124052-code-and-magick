@@ -17,8 +17,6 @@ define(function() {
 
   Gallery.prototype.show = function(number) {
     var self = this;
-    this.currentPicture = new Image();
-    this.picturePreview.appendChild(this.currentPicture);
 
     this.closeBtn.onclick = function() {
       self.onCloseBtnClick();
@@ -29,16 +27,20 @@ define(function() {
     this.rightBtn.onclick = function() {
       self.onRightBtnClick();
     };
+
+    this.currentPicture = new Image();
+    this.picturePreview.appendChild(this.currentPicture);
     this.overlay.classList.remove('invisible');
     this.setActivePicture(number);
   };
 
   Gallery.prototype.hide = function() {
     this.overlay.classList.add('invisible');
+    this.picturePreview.removeChild(this.currentPicture);
+    this.currentPicture = null;
     this.closeBtn.onclick = null;
     this.leftBtn.onclick = null;
     this.rightBtn.onclick = null;
-    this.currentPicture = null;
   };
 
   Gallery.prototype.setActivePicture = function(number) {
