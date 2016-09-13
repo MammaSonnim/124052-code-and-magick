@@ -3,8 +3,9 @@
 define([
   './form',
   './game',
+  './gallery',
   './reviews'
-], function(form, Game) {
+], function(form, Game, Gallery) {
   var game = new Game(document.querySelector('.demo'));
   game.initializeLevelAndStart();
   game.setGameStatus(Game.Verdict.INTRO);
@@ -24,4 +25,18 @@ define([
   form.onClose = function() {
     game.setDeactivated(false);
   };
+
+  var galleryLinksCollection = document.querySelectorAll('.photogallery-image');
+  var galleryPicturesCollection = document.querySelectorAll('.photogallery-image img');
+  var pictures = Array.prototype.map.call(galleryPicturesCollection, function(picture) {
+    return picture.src;
+  });
+  var gallery = new Gallery(pictures);
+
+  Array.prototype.forEach.call(galleryLinksCollection, function(link, i) {
+    link.addEventListener('click', function() {
+      gallery.show(i);
+    });
+  });
 });
+
