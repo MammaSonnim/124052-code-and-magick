@@ -556,6 +556,7 @@ input[type=radio]:checked + .review-mark-label {
 
 .overlay-gallery-control.disable {
   opacity: 0.2;
+  pointer-events: none;
 }
 
 .overlay-gallery-control-right {

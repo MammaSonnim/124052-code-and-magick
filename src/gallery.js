@@ -32,6 +32,7 @@ define(function() {
     this.picturePreview.appendChild(this.currentPicture);
     this.overlay.classList.remove('invisible');
     this.setActivePicture(number);
+    this.setActiveBtns();
   };
 
   Gallery.prototype.hide = function() {
@@ -57,12 +58,26 @@ define(function() {
     if (this.activePicture > 0) {
       this.setActivePicture(this.activePicture - 1);
     }
+    this.setActiveBtns();
   };
 
   Gallery.prototype.onRightBtnClick = function() {
-    var picturesTotal = this.pictures.length;
-    if (this.activePicture < picturesTotal - 1) {
+    if (this.activePicture < this.pictures.length - 1) {
       this.setActivePicture(this.activePicture + 1);
+    }
+    this.setActiveBtns();
+  };
+
+  Gallery.prototype.setActiveBtns = function() {
+    if (this.activePicture <= 0) {
+      this.leftBtn.classList.add('disable');
+      this.rightBtn.classList.remove('disable');
+    } else if (this.activePicture >= this.pictures.length - 1) {
+      this.rightBtn.classList.add('disable');
+      this.leftBtn.classList.remove('disable');
+    } else {
+      this.rightBtn.classList.remove('disable');
+      this.leftBtn.classList.remove('disable');
     }
   };
 
